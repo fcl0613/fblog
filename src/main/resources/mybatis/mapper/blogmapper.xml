@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fcl.fblog.mapper.BlogDao">
+
+    <resultMap id="baseMap" type="com.fcl.fblog.pojo.Blog">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="preface" property="preface"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="flag" property="flag"/>
+        <result column="visit_count" property="visitCount"/>
+        <result column="published" property="published"/>
+        <result column="enable_comment" property="enableComment"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+<!--        <result column="category_id" property="categoryId"/>-->
+        <association property="category" javaType="com.fcl.fblog.pojo.Category">
+            <id column="category_id" property="id"/>
+            <result column="category_name" property="categoryName"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="backendList" type="com.fcl.fblog.pojo.Blog" extends="baseMap">
+        <collection property="tags"
+                    javaType="ArrayList"
+                    ofType="com.fcl.fblog.pojo.Tag"
+                    column="id"
+                    select="com.fcl.fblog.mapper.TagDao.findTagByBlogId"></collection>
+    </resultMap>
+
+    <resultMap extends="backendList" id="ResultMapWithBLOBs" type="com.fcl.fblog.pojo.Blog">
+        <result column="content" jdbcType="LONGNVARCHAR" property="content"/>
+    </resultMap>
+
+    <resultMap id="frontIndexMap" type="com.fcl.fblog.pojo.Blog">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="preface" property="preface"/>
+        <result column="img_url" property="imgUrl"/>
+        <result column="flag" property="flag"/>
+        <result column="visit_count" property="visitCount"/>
+        <result column="update_time" property="updateTime"/>
+        <association property="category" javaType="com.fcl.fblog.pojo.Category">
+            <result column="category_name" property="categoryName"/>
+        </association>
+    </resultMap>
+
+    <sql id="findBackendSql">
+        blog.id,title,img_url,preface,flag,visit_count,enable_comment,published,create_time,
+        update_time,category_id,category_name
+    </sql>
+
+    <sql id="getblog">
+        blog.id,title,preface,content,img_url,flag,visit_count,enable_comment,published,create_time,
+        update_time,category_id,category_name
+    </sql>
+
+
+    <select id="findBlog" resultMap="backendList">
+        select
+        <include refid="findBackendSql"></include>
+        from blog left join category on blog.category_id = category.id
+        <where>
+            <if test="blogTitle != null">
+                blog.title like
+                concat('%',#{blogTitle},'%')
+            </if>
+            <if test="categoryId != null and categoryId != 0">
+                and blog.category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBlog" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="getblog"></include>
+        from blog left join category on blog.category_id = category.id where blog.id = #{id}
+    </select>
+
+    <insert id="saveBlog" parameterType="com.fcl.fblog.pojo.Blog">
+        <selectKey keyProperty="id" resultType="java.lang.Integer" order="AFTER">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into blog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="title != null">
+                title,
+            </if>
+            <if test="content != null">
+                content,
+            </if>
+            <if test="imgUrl != null">
+                img_url,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="preface != null">
+                preface,
+            </if>
+            <if test="visitCount != null">
+                visit_count,
+            </if>
+            <if test="enableComment != null">
+                enable_comment,
+            </if>
+            <if test="published != null">
+                published,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="category != null">
+                <if test="category.id != null">
+                    category_id,
+                </if>
+            </if>
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="title != null">
+                #{title},
+            </if>
+            <if test="content != null">
+                #{content},
+            </if>
+            <if test="imgUrl != null">
+                #{imgUrl},
+            </if>
+            <if test="flag != null">
+                #{flag},
+            </if>
+            <if test="preface != null">
+                #{preface},
+            </if>
+            <if test="visitCount != null">
+                #{visitCount},
+            </if>
+            <if test="enableComment != null">
+                #{enableComment},
+            </if>
+            <if test="published != null">
+                #{published},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime},
+            </if>
+            <if test="category != null">
+                <if test="category.id != null">
+                    #{category.id},
+                </if>
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateBlog">
+        update blog
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl},
+            </if>
+            <if test="flag != null">
+                flag = #{flag},
+            </if>
+            <if test="visitCount != null">
+                visit_count = #{visitCount},
+            </if>
+            <if test="enableComment != null">
+                enable_comment = #{enableComment},
+            </if>
+            <if test="published != null">
+                published = #{published},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="category != null">
+                <if test="category.id != null">
+                    category_id = #{category.id},
+                </if>
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBlog" parameterType="java.util.ArrayList">
+        delete from blog where id in 
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="saveBlogTagRelation">
+        insert into blog_tag_relation(blog_id,tag_id)
+        values
+        <foreach collection="list" separator="," item="tagId">
+            (#{blogId},#{tagId})
+        </foreach>
+    </insert>
+
+    <select id="findTagsByBlogId" resultType="com.fcl.fblog.pojo.Tag" parameterType="integer">
+        select * from blog_tag_relation where blog_id = #{id};
+    </select>
+
+    <delete id="deleteTagsRelationByBlogId" parameterType="integer">
+        delete from blog_tag_relation where blog_id = #{id};
+    </delete>
+
+    <select id="findBlog4Index" resultMap="frontIndexMap" parameterType="string">
+        select blog.id, title, preface, category_name, img_url, update_time, visit_count, flag
+        from blog left join category on blog.category_id = category.id
+        <where>
+            published = 1
+            <if test="searchName != null and searchName != ''">
+                and blog.title like
+                concat('%',#{searchName},'%')
+                or blog.preface like
+                concat('%',#{searchName},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findTopBlog" resultType="com.fcl.fblog.pojo.Blog" parameterType="integer">
+        select id,title from blog where published = 1 order by visit_count desc limit #{limit}
+    </select>
+
+    <select id="findAllWithTitleAndId" resultType="com.fcl.fblog.pojo.Blog">
+        select id,title from blog
+    </select>
+
+    <select id="findBlog4Category" resultMap="frontIndexMap" parameterType="integer">
+        select blog.id, title, preface, preface, category_name, img_url, update_time, visit_count, flag
+        from blog left join category on blog.category_id = category.id
+        <where>
+            published = 1
+            <if test="categoryId != null and categoryId != ''">
+                and blog.category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findBlogByTagId" parameterType="integer" resultMap="frontIndexMap">
+        select blog.id, title, preface, category_name, img_url, update_time, visit_count, flag
+        from blog left join
+        blog_tag_relation on blog.id = blog_tag_relation.blog_id
+        LEFT JOIN category on blog.category_id = category.id
+        where blog.published = 1 and tag_id=#{tagId}
+    </select>
+
+    <select id="findBlogYear" resultType="string">
+        SELECT DATE_FORMAT(blog.create_time,'%Y') as `year` FROM blog GROUP BY `year` ORDER BY `year`
+    </select>
+
+    <select id="findBlogByYear" resultType="com.fcl.fblog.pojo.Blog" parameterType="string">
+        select blog.id,blog.title,blog.create_time,blog.flag from blog
+        where DATE_FORMAT(blog.create_time,'%Y')=#{year}
+    </select>
+
+    <update id="updateVisitCount" parameterType="integer">
+        update blog
+        set visit_count = visit_count+1
+        where id = #{id}
+    </update>
+
+    <select id="getBlogCountAndVisitCount" resultType="map">
+        SELECT COUNT(id) AS blogCount,SUM(visit_count) AS blogVisitCount FROM blog
+    </select>
+
+</mapper>

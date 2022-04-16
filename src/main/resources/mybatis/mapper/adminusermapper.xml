@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fcl.fblog.mapper.AdminUserDao">
+    <select id="findAdminUserByUserName" parameterType="string" resultType="com.fcl.fblog.pojo.AdminUser">
+        select * from adminuser where user_name = #{username}
+    </select>
+
+    <update id="updateInfo" parameterType="com.fcl.fblog.pojo.AdminUser">
+        update adminuser
+        <set>
+            <if test="nickName != null">
+                nick_name=#{nickName},
+            </if>
+            <if test="password != null">
+                password=#{password},
+            </if>
+            <if test="email != null">
+                email=#{email},
+            </if>
+            <if test="updateTime != null">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fcl.fblog.mapper.CategoryDao">
+    <insert id="insertCategory" parameterType="com.fcl.fblog.pojo.Category">
+        insert into category(category_name) values (#{categoryName})
+    </insert>
+
+    <select id="getCategory" parameterType="integer" resultType="com.fcl.fblog.pojo.Category">
+        select * from category where id = #{id}
+    </select>
+
+    <update id="updateCategory" parameterType="com.fcl.fblog.pojo.Category">
+        update category set category_name = #{categoryName} where id = #{id}
+    </update>
+
+    <delete id="deleteCategory" parameterType="java.util.ArrayList">
+        delete from category where id in
+        <foreach collection="list" item="id"  separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findCategory" resultType="com.fcl.fblog.pojo.Category">
+        select * from category
+        <if test="categoryName != null and categoryName != ''">
+            where category_name
+            like
+            concat('%',#{categoryName},'%')
+        </if>
+    </select>
+
+    <select id="findTopCategory" resultType="com.fcl.fblog.entity.IndexCategoryVo">
+        SELECT category.*,COUNT(blog.id) AS blog_count FROM
+        category LEFT JOIN blog ON category.id = blog.category_id
+        GROUP BY category.id ORDER BY blog_count DESC LIMIT
+        #{limit}
+    </select>
+
+    <select id="getCategoryCount" resultType="integer">
+        select count(*) from category;
+    </select>
+</mapper>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>文章列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/static/admin/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/admin/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">选择博客</label>
+                            <div class="layui-input-block">
+                                <select lay-filter="bloglist" id="bloglist" name="blogid" lay-verify="required">
+                                  <option value=""></option>
+                                  <option value="0">博客1</option>
+                                  <option value="1">博客2</option>
+                                  <option value="2">博客3</option>
+                                  <option value="3">博客4</option>
+                                  <option value="4">博客5</option>
+                                </select>
+                              </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-refresh-btn"><i class="layui-icon layui-icon-refresh"></i> 刷 新</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+
+    </div>
+</div>
+<script th:src="@{/static/admin/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{/static/admin/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+
+<script type="text/html" id="isDeletedTool">
+    {{#  if(d.isDelete == 1){ }}
+    <input type="checkbox" name="isDeleted" lay-skin="switch" value="{{d.id}}"
+           lay-text="已删除|未删除" lay-filter="isDeleted" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="isDeleted" lay-skin="switch" value="{{d.id}}"
+           lay-text="已删除|未删除" lay-filter="isDeleted">
+    {{#  } }}
+</script>
+
+<script type="text/html" id="isStatusTool">
+    {{#  if(d.commentStatus == 1){ }}
+    <input type="checkbox" name="commentStatus" lay-skin="switch" value="{{d.id}}"
+           lay-text="已审核|未审核" lay-filter="commentStatus" disabled checked>
+    {{#  } else { }}
+    <input type="checkbox" name="commentStatus" lay-skin="switch" value="{{d.id}}"
+           lay-text="已审核|未审核" lay-filter="commentStatus">
+    {{#  } }}
+</script>
+
+<script th:inline="javascript">
+
+    let contextPath = [[@{/}]];
+
+
+
+
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            url: contextPath+'admin/comment/list',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            done: function (res, curr, count) {
+                $("table").css("width", "100%");
+            },
+            cols: [
+                [
+                    {field: 'id',title: 'ID',hide:true},
+                    {field: 'title', width: 150, title: '评论博客标题'},
+                    {field: 'nickName', width: 150, title: '评论者昵称'},
+                    {field: 'email', width: 150, title: '评论者邮箱'},
+                    {field: 'content', width: 200, title: '评论内容'},
+                    {field: 'createTime', width: 200, title: '评论时间'},
+                    {field: 'commentStatus', width: 120, title: '当前状态', templet: '#isStatusTool'},
+                    {field: 'isDelete', width: 120, title: '是否已删除', templet: '#isDeletedTool'}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            // console.log(data.field.blogid)
+            // var result = JSON.stringify(data.field);
+            // layer.alert(result, {
+            //     title: '最终的搜索信息'
+            // });
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: data.field.blogid
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        //刷新重载
+        form.on('submit(data-refresh-btn)', function (data) {
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    searchParams: '0'
+                }
+            }, 'data');
+            reset();
+            return false;
+        });
+
+        form.on('switch(isDeleted)', function (data) {
+            // console.log(data.value);
+            var isDeleted = data.elem.checked ? 1 : 0; //1为已删除,0为未删除
+            // console.log(isDeleted);
+            var url = contextPath + 'admin/comment/delete'
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post(url,
+                {
+                    "commentid": data.value,
+                    "isdelete": isDeleted,
+                    "_method": "DELETE"
+                }, function (response) {
+                    if (response.code == 0){
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            form.render('select','isDeleted');
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }else {
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }
+                });
+        });
+
+        form.on('switch(commentStatus)', function (data) {
+            console.log(data)
+            var commentStatus = data.elem.checked ? 1 : 0; //1为已审核,0为未审核
+            var url = contextPath + 'admin/comment/update'
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            $.post(url,
+                {
+                    "commentid": data.value,
+                    "commentstatus": commentStatus,
+                    "_method": "PUT"
+                }, function (response) {
+                    if (response.code == 0){
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            checkDisable();
+                            form.render('select','commentStatus');
+                            checkDisable();
+                            top.layer.msg(response.msg,function () {
+                                checkDisable();
+                            });
+                        }, 500);
+                    }else {
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }
+                });
+        });
+
+
+        $.ajax({
+            url: contextPath+'admin/blog/all',
+            dataType: 'json',
+            type: 'get',
+            success: function (response) {
+                let str="<option value='0'>全部</option>";
+                for(let i of response.data){
+                    str+=`<option value='${i.id}'>${i.title}</option>`;
+                }
+                $("#bloglist").html(str);
+                form.render();
+                //重新渲染 固定写法
+            }
+        });
+
+    });
+
+    function reload() {
+        $.get("/admin/v1/reload", function (data) {
+            if (data) {
+                location.reload();
+            } else {
+                parent.location.reload();
+            }
+        });
+    }
+
+    function reset() {
+        $('#bloglist option:first').prop("selected","selected");
+        layui.form.render('select')
+    }
+
+    function checkDisable() {
+        // $("input[name='commentStatus']")[0].attr("disabled","disabled");
+        jQuery($("input[name='commentStatus']")[1]).addClass('layui-checkbox-disbaled layui-disabled').attr("disabled","disabled");
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="blog/common :: header(~{::title})">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="../static/blog/css/myconfig.css">
+</head>
+<body>
+    <!-- 导航 -->
+    <nav th:replace="blog/common :: navbar(5)" class="ui inverted attached segment m-padded-tb-mini m-shadow-small">
+        <div class="ui container">
+            <div class="ui inverted secondary menu stackable">
+                <h2 class="ui blue header item">FBlog</h2>
+                <a href="#" class="navitem item m-mobile-hide"><i class="home icon"></i>首页</a>
+                <a href="#" class="navitem item m-mobile-hide"><i class="idea icon"></i>分类</a>
+                <a href="#" class="navitem item m-mobile-hide"><i class="tags icon"></i>标签</a>
+                <a href="#" class="navitem item m-mobile-hide"><i class="clone icon"></i>归档</a>
+                <a href="#" class="navitem item m-mobile-hide active"><i class="info icon"></i>关于我</a>
+                <div class="navitem right item m-mobile-hide">
+                    <div class="ui icon input">
+                        <input type="text" placeholder="Search......">
+                        <i class="search link icon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="#" id="navmenu" class="ui icon black button m-top-right m-mobile-show">
+            <i class="sidebar icon"></i>
+        </a>
+    </nav>
+    <!-- 主体内容 -->
+    <div class="m-padding-tb-large m-container">
+        <div class="container ui">
+            <div class="ui grid stackable">
+                <div class="eleven wide column">
+                    <div class="ui segment">
+                        <img th:src="@{/blog/images/1.png}" alt="" style="width: 800px; height: 500px;" class="ui rounded image">
+                    </div>
+                </div>
+                <div class="five wide column">
+                    <div class="ui top attached segment">
+                        <div class="ui header">关于我</div>
+                    </div>
+                    <div class="attached segment ui">
+                        <p class="m-text">只是一条咸鱼，没什么好说的</p>
+                        <p class="m-text">这个只是做着玩玩的没有技术含量可言</p>
+                    </div>
+                    <div class="ui attached segment">
+                        <div class="ui blue basic label left pointing m-margin-tb-tiny">编程</div>
+                        <div class="ui blue basic label left pointing m-margin-tb-tiny">游戏</div>
+                        <div class="ui blue basic label left pointing m-margin-tb-tiny">剪辑</div>
+                        <div class="ui blue basic label left pointing m-margin-tb-tiny">睡懒觉</div>
+                        <div class="ui blue basic label left pointing m-margin-tb-tiny">摸鱼</div>
+                    </div>
+                    <div class="ui attached segment">
+                        <div class="ui teal basic label left pointing m-margin-tb-tiny">java</div>
+                        <div class="ui teal basic label left pointing m-margin-tb-tiny">python</div>
+                        <div class="ui teal basic label left pointing m-margin-tb-tiny">vue</div>
+                        <div class="ui teal basic label left pointing m-margin-tb-tiny">数据库</div>
+                        <div class="ui teal basic label left pointing m-margin-tb-tiny">数据结构和算法</div>
+                    </div>
+                    <div class="ui bottom attached segment">
+                        <a href="https://github.com/fcl0613" target="_blank" class="ui circular button icon">
+                            <i class="github icon"></i>
+                        </a>
+                        <div class="ui circular button icon" id="weichatcode">
+                            <i class="wechat icon"></i>
+                        </div>
+                        <div class="ui qq circular button icon" data-content="488028086">
+                            <i class="qq icon"></i>
+                        </div>
+                    </div>
+                    <div id="prcode" class="ui flowing popup transition hidden">
+                        <img th:src="@{/blog/images/1.png}" alt="" style="width:100px;" class="ui rounded image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 脚部 -->
+    <footer th:replace="blog/common :: footer" class="ui inverted segment vertical m-padding-tb-massive">
+        <div class="ui center aligned container">
+            <div class="ui stackable inverted divided grid">
+                <div class="three wide column">
+                    <div class="ui inverted link list">
+                        <div class="item">
+                            <img src="../static/blog/images/1.png" class="ui rounded image" alt="二维码图片" style="width: 100px; height: 100px;">
+                        </div>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted header m-text-thin .m-text-spaced">最新博客</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">hah hd </a>
+                        <a href="#" class="item">hah hd </a>
+                        <a href="#" class="item">hah hd </a>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted header m-text-thin .m-text-spaced">联系我</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">hah hd </a>
+                        <a href="#" class="item">hah hd </a>
+                        <a href="#" class="item">hah hd </a>
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <h4 class="ui inverted header m-text-thin .m-text-spaced">介绍</h4>
+                    <p>大家晚安和第三方合肥市发黑合肥好废物</p>
+                </div>
+            </div>
+            <div class="ui inverted section divider"></div>
+            <p class="m-text-thin .m-text-spaced m-opacity-mini">备案信息
+                哈哈哈哈
+            </p>
+            <p class="m-text-thin .m-text-spaced m-opacity-mini">版本信息</p>
+        </div>
+    </footer>
+    <th:block th:replace="blog/common :: script">
+        <script th:src="@{/blog/js/jquery-3.6.0.min.js}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    </th:block>
+    <script>
+        $('#navmenu').click(function(){
+            $('.navitem').toggleClass('m-mobile-hide')
+        });
+        $('.qq').popup()
+
+        $('#weichatcode').popup({
+            popup: $('#prcode'),
+            on : 'click',
+            position: 'bottom center'
+        })
+    </script>
+</body>
+</html>

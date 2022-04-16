@@ -1,0 +1,95 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "welcome.html?t=1"
+  },
+  "logoInfo": {
+    "title": "FBLOG",
+    "image": "../admin/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "常规管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "文章管理",
+          "href": "",
+          "icon": "fa fa-tasks",
+          "target": "_self",
+          "child": [
+            {
+              "title": "文章编辑",
+              "href": "essayedit.html",
+              "icon": "fa fa-align-justify",
+              "target": "_self"
+            },
+            {
+              "title": "文章列表",
+              "href": "bloglist.html",
+              "icon": "fa fa-list",
+              "target": "_self"
+            },
+            {
+              "title": "评论列表",
+              "href": "comment.html",
+              "icon": "fa fa-comment",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "标签管理",
+          "href": "",
+          "icon": "fa fa-tags",
+          "target": "_self",
+          "child":[
+            {
+              "title":"标签列表",
+              "href": "tagslist.html",
+              "icon": "fa fa-tag",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "分类管理",
+          "href": "",
+          "icon": "fa fa-sliders",
+          "target": "_self",
+          "child":[
+            {
+              "title":"分类列表",
+              "href": "categorylist.html",
+              "icon": "fa fa-list-ul",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "系统管理",
+          "href": "",
+          "icon": "fa fa-cog",
+          "target": "_self",
+          "child": [
+            {
+              "title": "系统信息",
+              "href": "form.html",
+              "icon": "fa fa-list-alt",
+              "target": "_self"
+            },
+            {
+              "title": "链接列表",
+              "href": "form-step.html",
+              "icon": "fa fa-navicon",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

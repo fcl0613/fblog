@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>文章列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" th:href="@{/static/admin/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/static/admin/css/public.css}" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">分类</label>
+                            <div class="layui-input-block">
+                                <select id="categorylist" lay-filter="category" name="categoryid" lay-verify="required">
+                                  <option value="0">请选择分类</option>
+                                </select>
+                              </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">文章标题</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="titlename" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" id="research" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                        <div class="layui-inline">
+                            <button id="refresh" onclick="reset()" type="submit" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-refresh"></i> 刷 新</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+<script th:src="@{/static/admin/lib/jquery-3.4.1/jquery-3.4.1.min.js}" charset="utf-8"></script>
+<script th:src="@{/static/admin/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+
+<script type="text/html" id="blogStatusTool">
+    {{#  if(d.published == 1){ }}
+    <input type="checkbox" name="published" lay-skin="switch" value="{{d.id}}"
+           lay-text="发布|草稿" lay-filter="published" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="published" lay-skin="switch" value="{{d.id}}"
+           lay-text="发布|草稿" lay-filter="published">
+    {{#  } }}
+</script>
+<script type="text/html" id="enableCommentTool">
+    {{#  if(d.enableComment == 1){ }}
+    <input type="checkbox" name="enableComment" lay-filter="enableComment"
+           lay-skin="switch" value="{{d.id}}" lay-text="允许评论|不许评论" checked>
+    {{#  } else { }}
+    <input type="checkbox" name="enableComment" lay-filter="enableComment"
+           lay-skin="switch" value="{{d.id}}" lay-text="允许评论|不许评论">
+    {{#  } }}
+</script>
+
+<script th:inline="javascript">
+
+    function reset(){
+        $('input').attr("value","");
+        $('#categorylist').val("0");
+        refresh();
+    }
+
+    function refresh(){
+        $('#research').click();
+    }
+
+    let contextPath = [[@{/}]];
+
+    $.ajax({
+        url: contextPath + 'admin/category/all',
+        dataType: 'json',
+        type: 'get',
+        timeout: 5000,
+        success: function (response) {
+            $("#categorylist").empty();
+            $("#categorylist").append("<option value='0'>请选分类名称</option>");
+            if(response.code == 1){
+                $("#categorylist").append("<option value='0'>暂无分类</option>");
+                layui.form.render('select');
+            }else{
+                $.each(response.data, function(key, val) {
+                    $("#categorylist").append('<option value='+val.id+'>'+val.categoryName+'</option>');
+                    layui.form.render('select');
+                });
+            }
+        }
+    });
+
+
+    layui.use(['form', 'table','element'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            url: contextPath + 'admin/blog/list',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [
+                [
+                    {type: "checkbox", width: 50},
+                    {field: 'id', width: 100, title: '博客ID'},
+                    {field: 'title', width: 120, title: '博客标题'},
+                    {field: 'category', width: 100, title: '博客分类', templet:function (d) {
+                            return d.category.categoryName;
+                        }},
+                    {field: 'tags', width: 180, title: '博客标签', templet:function (d) {
+                            var tags = "";
+                            var list = d.tags;
+                            if (list != null){
+                                $.each(list, function(index, item) {
+                                    tags += item.tagName+","
+                                });
+                            }else{
+                                tags += "该博客没有标签";
+                            }
+                            return tags;
+                        }},
+                    {field: 'flag', width:100, title: '标志'},
+                    {field: 'visitCount', width:100, title: '阅读量', sort: true},
+                    {field: 'createTime', width: 180, title: '创建时间'},
+                    {field: 'updateTime', width: 180, title: '最后修改时间'},
+                    {field: 'published', width: 120, title: '文章状态', templet: '#blogStatusTool'},
+                    {field: 'enableComment', width: 130, title: '评论',templet: '#enableCommentTool'},
+                    {title: '操作', minWidth: 120, toolbar: '#currentTableBar', align: "center"}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 10,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    blogtitle: data.field.titlename,
+                    categoryid: data.field.categoryid
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var url = contextPath + 'admin/essayedit.html'
+                parent.AddTab(url,url,'博客添加')
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                if (data.length == 0 ){
+                    layer.alert('您未选中任何数据', {icon: 2, anim: 6, title: '警告'});
+                    return false;
+                }
+                var idarr = new Array();
+                $(data).each(function () {
+                    idarr.push(this.id)
+                })
+                layer.confirm('确认删除这些数据?', {icon: 3, title: '删除确认'}, function (index) {
+                    var url = contextPath + 'admin/blog/delete/' + idarr.join(',');
+                    var params = {
+                        _method: "DELETE"
+                    };
+                    $.post(url, params, function (response) {
+                        if (response.code == 0){
+                            layer.msg(response.msg, {icon: 1, time: 1500});
+                            reset();
+                        }else {
+                            layer.msg(response.msg, {icon: 2, anim: 6});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                location.href=contextPath+"admin/blog/toedit?blogid="+ data.id;
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    var url = contextPath + 'admin/blog/delete/' + data.id;
+                    var params = {
+                        _method: "DELETE"
+                    };
+                    $.post(url, params, function (response) {
+                        if (response.code == 0){
+                            layer.msg(response.msg, {icon: 1, time: 1500});
+                            reset();
+                        }else {
+                            layer.msg(response.msg, {icon: 2, anim: 6});
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+
+        form.on('switch(published)', function (data) {
+            var published = data.elem.checked ? 1 : 0; //1为发布,0为草稿
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            var url = contextPath + 'logout'
+            $.post(url,
+                {
+                    "blogid": data.value,
+                    "published": published
+                }, function (response) {
+                    if (response.code == 0){
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            form.render('select', 'published');
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }else{
+                        data.elem.checked = data.elem.checked ? 0 : 1;
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            form.render('select', 'published');
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }
+                });
+        });
+
+        form.on('switch(enableComment)', function (data) {
+            var enableComment = data.elem.checked ? 1 : 0; //1为不允许评论,0为允许评论
+            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+            var url = contextPath + "admin/blog/enablecomment"
+            $.post(url,
+                {
+                    "blogid": data.value,
+                    "enableComment": enableComment
+                }, function (response) {
+                    if (response.code == 0){
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            form.render('select', 'enableComment');
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }else{
+                        // data.elem.checked = data.elem.checked ? 0 : 1;
+                        setTimeout(function () {
+                            top.layer.close(index);
+                            form.render('select', 'enableComment');
+                            top.layer.msg(response.msg);
+                        }, 500);
+                    }
+                });
+        });
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fcl.fblog.mapper.CommentDao">
+
+    <select id="findComment" resultType="com.fcl.fblog.entity.BackendCommentVo">
+        select comment.id,nick_name,email,comment.content,comment_status,is_delete,comment.create_time,title
+        from comment left join blog on comment.blog_id = blog.id
+        <where>
+            <if test="blogId != null and blogId != ''">
+                comment.blog_id = #{blogId}
+            </if>
+        </where>
+    </select>
+
+    <select id="findCommentByBlogId" parameterType="integer" resultType="com.fcl.fblog.pojo.Comment">
+        select id,blog_id,nick_name,parent_id,email,parent_nick_name,content,avatar,create_time from `comment`
+        <where>
+            <if test="id != null and id != ''">
+                blog_id = #{id}
+            </if>
+            and comment_status = 1 and is_delete = 0
+        </where>
+        order by create_time
+    </select>
+
+    <insert id="saveComment" parameterType="com.fcl.fblog.pojo.Comment">
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="blogId != null and blogId != ''">
+                blog_id,
+            </if>
+            <if test="parentId != null and parentId != ''">
+                parent_id,
+            </if>
+            <if test="nickName != null and nickName != ''">
+                nick_name,
+            </if>
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="content != null and content != ''">
+                content,
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar,
+            </if>
+            <if test="parentNickName != null and parentNickName != ''">
+                parent_nick_name,
+            </if>
+                comment_status,
+                is_delete,
+                create_time,
+        </trim>
+        values
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="blogId != null and blogId != ''">
+                #{blogId},
+            </if>
+            <if test="parentId != null and parentId != ''">
+                #{parentId},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                #{nickName},
+            </if>
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="content != null and content != ''">
+                #{content},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                #{avatar},
+            </if>
+            <if test="parentNickName != null and parentNickName != ''">
+                #{parentNickName},
+            </if>
+                #{commentStatus},
+                #{isDelete},
+                #{createTime},
+        </trim>
+    </insert>
+
+    <update id="deleteCommentLogic">
+        update comment set is_delete = #{isDelete} where id = #{commentId}
+    </update>
+
+    <update id="updateCommentPublished">
+        update comment set comment_status = #{commentStatus} where id = #{commentId}
+    </update>
+
+    <select id="getCommentCount" resultType="integer">
+        select count(*) from comment
+    </select>
+
+    <delete id="deleteCommentByBlogIds" parameterType="list">
+        delete from comment where blog_id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

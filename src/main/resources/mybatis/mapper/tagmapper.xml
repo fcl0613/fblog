@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fcl.fblog.mapper.TagDao">
+    <insert id="saveTag" parameterType="com.fcl.fblog.pojo.Tag">
+        insert into tag(tag_name) values (#{tagName})
+    </insert>
+
+    <select id="getTag" parameterType="integer" resultType="com.fcl.fblog.pojo.Tag">
+        select * from tag where id = #{id}
+    </select>
+
+    <update id="updateTag" parameterType="com.fcl.fblog.pojo.Tag">
+        update tag set tag_name = #{tagName} where id = #{id}
+    </update>
+
+    <delete id="removeTag" parameterType="java.util.ArrayList">
+        delete from tag where id in
+        <foreach collection="list" item="id"  separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="findTag" parameterType="string" resultType="com.fcl.fblog.pojo.Tag">
+        select * from tag
+        <if test="tagName != null and tagName != ''">
+            where tag_name
+            like
+            concat('%',#{tagName},'%')
+        </if>
+    </select>
+
+    <select id="findTagByBlogId" resultType="com.fcl.fblog.pojo.Tag" parameterType="integer">
+        select * from tag
+        where id in
+        (select tag_id from blog_tag_relation where blog_id = #{blogId})
+    </select>
+
+    <select id="findTopTag" resultType="com.fcl.fblog.entity.IndexTagVo">
+        SELECT tag.*,COUNT(blog_tag_relation.blog_id) AS blog_count FROM
+        tag LEFT JOIN blog_tag_relation ON tag.id = blog_tag_relation.tag_id
+        GROUP BY tag.id ORDER BY blog_count DESC LIMIT #{limit}
+    </select>
+</mapper>
