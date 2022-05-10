@@ -250,7 +250,7 @@
         form.on('switch(published)', function (data) {
             var published = data.elem.checked ? 1 : 0; //1为发布,0为草稿
             var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
-            var url = contextPath + 'logout'
+            var url = contextPath + 'admin/blog/published'
             $.post(url,
                 {
                     "blogid": data.value,
