@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+mvnw
+mvnw.cmd
+*.iml
+blog.log
+blog.log.2022-05-10.0
