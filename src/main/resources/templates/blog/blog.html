@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>详情</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" th:href="@{/static/blog/css/semantic.min.css}">
     <link rel="stylesheet" href="../../static/blog/css/typo.css" th:href="@{/blog/css/typo.css}">
     <link rel="stylesheet" href="../../static/blog/css/animate.css"  th:href="@{/blog/css/animate.css}">
     <link rel="stylesheet" href="../../static/blog/lib/prism/prism.css"  th:href="@{/blog/lib/prism/prism.css}">
     <link rel="stylesheet" href="../../static/blog/lib/tocbot/tocbot.css"  th:href="@{/blog/lib/tocbot/tocbot.css}">
     <link rel="stylesheet" href="../../static/blog/css/myconfig.css"  th:href="@{/blog/css/myconfig.css}">
-    <link rel="stylesheet" th:href="@{/admin/lib/layui-v2.6.3/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{static/admin/lib/layui-v2.6.3/css/layui.css}" media="all">
 </head>
 <body>
     <!-- 导航 -->
@@ -247,7 +247,7 @@
         <script src="../static/blog/lib/qrcode/qrcode.min.js"></script>
         <script src="../static/blog/lib/waypoints/jquery.waypoints.min.js"></script>
     </th:block>
-    <script th:src="@{/admin/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
+    <script th:src="@{/static/admin/lib/layui-v2.6.3/layui.js}" charset="utf-8"></script>
     <script th:inline="javascript">
         $('#navmenu').click(function(){
             $('.navitem').toggleClass('m-mobile-hide')

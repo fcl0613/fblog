@@ -211,7 +211,7 @@
                 ,done: function(res){
                     console.log(res.data)
                     if (res.code == 0){
-                        layer.msg(res.data.msg,{icon:1,anim:6},function () {
+                        layer.msg(res.msg,{icon:1,anim:6},function () {
                             $('#imgUrl').val(res.data)
                         })
                     }else {

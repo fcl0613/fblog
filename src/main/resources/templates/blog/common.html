@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:replace="${title}">详情</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" th:href="@{/static/blog/css/semantic.min.css}">
     <link rel="stylesheet" href="../static/blog/css/typo.css" th:href="@{/static/blog/css/typo.css}">
     <link rel="stylesheet" th:href="@{/static/blog/css/animate.css}">
     <link rel="stylesheet" th:href="@{/static/blog/lib/prism/prism.css}">
@@ -77,7 +77,7 @@
 
     <th:block th:fragment="script">
         <script src="../static/blog/js/jquery-3.6.0.min.js" th:src="@{/static/blog/js/jquery-3.6.0.min.js}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+        <script  th:src="@{/static/blog/js/semantic.min.js}"></script>
         <script src="../static/blog/lib/prism/prism.js" th:src="@{/static/blog/lib/prism/prism.js}"></script>
         <script src="../static/blog/lib/tocbot/tocbot.min.js" th:src="@{/static/blog/lib/tocbot/tocbot.min.js}"></script>
         <script src="../static/blog/lib/qrcode/qrcode.min.js" th:src="@{/static/blog/lib/qrcode/qrcode.min.js}"></script>
