@@ -11,19 +11,19 @@ public class MVCConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //windows
-        registry.addResourceHandler("/img/cover/**")
-                .addResourceLocations("file:" + System.getProperty("user.dir") +
-                        System.getProperty("file.separator") + "img"+
-                        System.getProperty("file.separator"));
-        //linux
-        // /usr/local/tomcat/bin
 //        registry.addResourceHandler("/img/cover/**")
-//                .addResourceLocations("file:"+System.getProperty("file.separator")+"usr"+
-//                        System.getProperty("file.separator")+"local"+
-//                        System.getProperty("file.separator")+"tomcat"+
-//                        System.getProperty("file.separator")+"bin"+
-//                        System.getProperty("file.separator")+"img"+
+//                .addResourceLocations("file:" + System.getProperty("user.dir") +
+//                        System.getProperty("file.separator") + "img"+
 //                        System.getProperty("file.separator"));
+        //linux
+//         /usr/local/tomcat/bin
+        registry.addResourceHandler("/img/cover/**")
+                .addResourceLocations("file:"+System.getProperty("file.separator")+"usr"+
+                        System.getProperty("file.separator")+"local"+
+                        System.getProperty("file.separator")+"tomcat"+
+                        System.getProperty("file.separator")+"bin"+
+                        System.getProperty("file.separator")+"img"+
+                        System.getProperty("file.separator"));
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
     }
 
